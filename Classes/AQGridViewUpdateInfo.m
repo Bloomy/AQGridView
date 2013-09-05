@@ -70,8 +70,6 @@
     if (_oldToNewIndexMap != NULL) free(_oldToNewIndexMap);
     
     if (_newToOldIndexMap != NULL) free(_newToOldIndexMap);
-    
-    [super dealloc];
 }
 
 

@@ -97,8 +97,6 @@
 - (void)dealloc
 {
     if (_selectionColorInfo != NULL) CFRelease(_selectionColorInfo);
-    
-    [super dealloc];
 }
 
 
