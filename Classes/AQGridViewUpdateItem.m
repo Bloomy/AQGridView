@@ -1,25 +1,25 @@
 /*
  * AQGridViewUpdateItem.m
  * AQGridView
- * 
+ *
  * Created by Jim Dovey on 1/3/2010.
  * Copyright (c) 2010 Kobo Inc. All rights reserved.
- * 
+ *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
  * are met:
- * 
+ *
  * Redistributions of source code must retain the above copyright notice,
  * this list of conditions and the following disclaimer.
- * 
+ *
  * Redistributions in binary form must reproduce the above copyright
  * notice, this list of conditions and the following disclaimer in the
  * documentation and/or other materials provided with the distribution.
- * 
+ *
  * Neither the name of the project's author nor the names of its
  * contributors may be used to endorse or promote products derived from
  * this software without specific prior written permission.
- * 
+ *
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
  * "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
  * LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS
@@ -38,100 +38,114 @@
 
 @implementation AQGridViewUpdateItem
 
-@synthesize originalIndex=_index, newIndex=_newIndex, action=_action, animation=_animation, offset=_offset;
+@synthesize originalIndex = _index, newIndex = _newIndex, action = _action, animation = _animation, offset = _offset;
 
-- (id) initWithIndex: (NSUInteger) index action: (AQGridViewUpdateAction) action animation: (AQGridViewItemAnimation) animation
+- (id)initWithIndex:(NSUInteger)index action:(AQGridViewUpdateAction)action animation:(AQGridViewItemAnimation)animation
 {
-	self = [super init];
-	if ( self == nil )
-		return ( nil );
-	
-	_index = index;
-	_action = action;
-	_animation = animation;
-	
-	return ( self );
+    self = [super init];
+    
+    if (self == nil) return (nil);
+    
+    _index = index;
+    _action = action;
+    _animation = animation;
+    
+    return (self);
 }
 
-- (void) setNewIndex: (NSUInteger) value
+
+- (void)setNewIndex:(NSUInteger)value
 {
-	NSAssert(self.action == AQGridViewUpdateActionMove, @"newIndex set on a non-move update item");
-	_newIndex = value;
+    NSAssert(self.action == AQGridViewUpdateActionMove, @"newIndex set on a non-move update item");
+    _newIndex = value;
 }
 
-- (NSString *) description
+
+- (NSString *)description
 {
-	NSString * actionDesc = @"<Unknown>";
-	switch ( _action )
-	{
-		case AQGridViewUpdateActionInsert:
-			actionDesc = @"Insert";
-			break;
-		case AQGridViewUpdateActionDelete:
-			actionDesc = @"Delete";
-			break;
-		case AQGridViewUpdateActionMove:
-			actionDesc = @"Move";
-			break;
-		case AQGridViewUpdateActionReload:
-			actionDesc = @"Reload";
-			break;
-		default:
-			break;
-	}
-	
-	NSString * animationDesc = @"<Unknown>";
-	switch ( (UITableViewRowAnimation)_animation )
-	{
-		case UITableViewRowAnimationFade:
-			animationDesc = @"Fade";
-			break;
-		case UITableViewRowAnimationRight:
-			animationDesc = @"Right";
-			break;
-		case UITableViewRowAnimationLeft:
-			animationDesc = @"Left";
-			break;
-		case UITableViewRowAnimationTop:
-			animationDesc = @"Top";
-			break;
-		case UITableViewRowAnimationBottom:
-			animationDesc = @"Bottom";
-			break;
-		case UITableViewRowAnimationNone:
-			animationDesc = @"None";
-			break;
-		case UITableViewRowAnimationMiddle:
-			animationDesc = @"Middle";
-			break;
-		default:
-			break;
-	}
-	
-	return ( [NSString stringWithFormat: @"%@{index=%u, action=%@, animation=%@, offset=%.02f}", [super description], (unsigned)_index, actionDesc, animationDesc, (double)_offset] );
+    NSString *actionDesc = @"<Unknown>";
+    
+    switch (_action) {
+        case AQGridViewUpdateActionInsert:
+            actionDesc = @"Insert";
+            break;
+            
+        case AQGridViewUpdateActionDelete:
+            actionDesc = @"Delete";
+            break;
+            
+        case AQGridViewUpdateActionMove:
+            actionDesc = @"Move";
+            break;
+            
+        case AQGridViewUpdateActionReload:
+            actionDesc = @"Reload";
+            break;
+            
+        default:
+            break;
+    }
+    
+    NSString *animationDesc = @"<Unknown>";
+    switch ( (UITableViewRowAnimation)_animation) {
+        case UITableViewRowAnimationFade:
+            animationDesc = @"Fade";
+            break;
+            
+        case UITableViewRowAnimationRight:
+            animationDesc = @"Right";
+            break;
+            
+        case UITableViewRowAnimationLeft:
+            animationDesc = @"Left";
+            break;
+            
+        case UITableViewRowAnimationTop:
+            animationDesc = @"Top";
+            break;
+            
+        case UITableViewRowAnimationBottom:
+            animationDesc = @"Bottom";
+            break;
+            
+        case UITableViewRowAnimationNone:
+            animationDesc = @"None";
+            break;
+            
+        case UITableViewRowAnimationMiddle:
+            animationDesc = @"Middle";
+            break;
+            
+        default:
+            break;
+    }
+    
+    return ([NSString stringWithFormat:@"%@{index=%u, action=%@, animation=%@, offset=%.02f}", [super description], (unsigned)_index, actionDesc, animationDesc, (double)_offset]);
 }
 
-- (NSComparisonResult) compare: (AQGridViewUpdateItem *) other
+
+- (NSComparisonResult)compare:(AQGridViewUpdateItem *)other
 {
-	if ( _index > other->_index )
-		return ( NSOrderedDescending );
-	else if ( _index < other->_index )
-		return ( NSOrderedAscending );
-	return ( NSOrderedSame );
+    if (_index > other->_index) return (NSOrderedDescending);
+    else if (_index < other->_index) return (NSOrderedAscending);
+    
+    return (NSOrderedSame);
 }
 
-- (NSComparisonResult) inverseCompare: (AQGridViewUpdateItem *) other
+
+- (NSComparisonResult)inverseCompare:(AQGridViewUpdateItem *)other
 {
-	return ( [other compare: self] );
+    return ([other compare:self]);
 }
 
-- (NSUInteger) index
+
+- (NSUInteger)index
 {
-	// handle case where offset is negative and would cause index to wrap
-	if ( (_offset < 0) && (abs(_offset) > _index) )
-		return ( 0 );
-	
-	return ( _index + _offset );
+    // handle case where offset is negative and would cause index to wrap
+    if ( (_offset < 0) && (abs(_offset) > _index) ) return (0);
+    
+    return (_index + _offset);
 }
+
 
 @end

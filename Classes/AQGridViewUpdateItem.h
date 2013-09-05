@@ -1,25 +1,25 @@
 /*
  * AQGridViewUpdateItem.h
  * AQGridView
- * 
+ *
  * Created by Jim Dovey on 1/3/2010.
  * Copyright (c) 2010 Kobo Inc. All rights reserved.
- * 
+ *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
  * are met:
- * 
+ *
  * Redistributions of source code must retain the above copyright notice,
  * this list of conditions and the following disclaimer.
- * 
+ *
  * Redistributions in binary form must reproduce the above copyright
  * notice, this list of conditions and the following disclaimer in the
  * documentation and/or other materials provided with the distribution.
- * 
+ *
  * Neither the name of the project's author nor the names of its
  * contributors may be used to endorse or promote products derived from
  * this software without specific prior written permission.
- * 
+ *
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
  * "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
  * LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS
@@ -38,33 +38,33 @@
 #import "AQGridView.h"
 
 typedef enum {
-	AQGridViewUpdateActionInsert,
-	AQGridViewUpdateActionDelete,
-	AQGridViewUpdateActionMove,
-	AQGridViewUpdateActionReload
+    AQGridViewUpdateActionInsert,
+    AQGridViewUpdateActionDelete,
+    AQGridViewUpdateActionMove,
+    AQGridViewUpdateActionReload
 } AQGridViewUpdateAction;
 
 @interface AQGridViewUpdateItem : NSObject
 {
-	NSUInteger				_index;
-	NSUInteger				_newIndex;
-	AQGridViewUpdateAction	_action;
-	AQGridViewItemAnimation	_animation;
-	NSInteger				_offset;
+    NSUInteger _index;
+    NSUInteger _newIndex;
+    AQGridViewUpdateAction _action;
+    AQGridViewItemAnimation _animation;
+    NSInteger _offset;
 }
 
-- (id) initWithIndex: (NSUInteger) index action: (AQGridViewUpdateAction) action animation: (AQGridViewItemAnimation) animation;
+- (id)initWithIndex:(NSUInteger)index action:(AQGridViewUpdateAction)action animation:(AQGridViewItemAnimation)animation;
 
-- (NSComparisonResult) compare: (AQGridViewUpdateItem *) other;
-- (NSComparisonResult) inverseCompare: (AQGridViewUpdateItem *) other;
+- (NSComparisonResult)compare:(AQGridViewUpdateItem *)other;
+- (NSComparisonResult)inverseCompare:(AQGridViewUpdateItem *)other;
 
 @property (nonatomic, readonly) NSUInteger index;
-@property (nonatomic) NSUInteger newIndex;		// only valid for AQGridViewUpdateActionMove
+@property (nonatomic) NSUInteger newIndex;              // only valid for AQGridViewUpdateActionMove
 @property (nonatomic, readonly) AQGridViewUpdateAction action;
 @property (nonatomic, readonly) AQGridViewItemAnimation animation;
 
 // this is an offset to apply to the index, due to other changes in the list which occurred since this index was chosen
 @property (nonatomic) NSInteger offset;
-@property (nonatomic, readonly) NSUInteger originalIndex;	// returns index without offset
+@property (nonatomic, readonly) NSUInteger originalIndex;       // returns index without offset
 
 @end

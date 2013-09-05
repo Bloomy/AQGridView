@@ -10,9 +10,10 @@
 
 @implementation NSIndexSet (AQIsSetContiguous)
 
-- (BOOL) aq_isSetContiguous
+- (BOOL)aq_isSetContiguous
 {
-    return ( (([self lastIndex] - [self firstIndex]) + 1) == [self count] );
+    return ( (([self lastIndex] - [self firstIndex]) + 1) == [self count]);
 }
+
 
 @end

@@ -9,5 +9,5 @@
 #import <Foundation/NSIndexSet.h>
 
 @interface NSIndexSet (AQIndexesOutsideSet)
-- (NSIndexSet *) aq_indexesOutsideIndexSet: (NSIndexSet *) otherSet;
+- (NSIndexSet *)aq_indexesOutsideIndexSet:(NSIndexSet *)otherSet;
 @end

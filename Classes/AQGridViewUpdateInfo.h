@@ -1,25 +1,25 @@
 /*
  * AQGridViewUpdateInfo.h
  * AQGridView
- * 
+ *
  * Created by Jim Dovey on 3/3/2010.
  * Copyright (c) 2010 Kobo Inc. All rights reserved.
- * 
+ *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
  * are met:
- * 
+ *
  * Redistributions of source code must retain the above copyright notice,
  * this list of conditions and the following disclaimer.
- * 
+ *
  * Redistributions in binary form must reproduce the above copyright
  * notice, this list of conditions and the following disclaimer in the
  * documentation and/or other materials provided with the distribution.
- * 
+ *
  * Neither the name of the project's author nor the names of its
  * contributors may be used to endorse or promote products derived from
  * this software without specific prior written permission.
- * 
+ *
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
  * "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
  * LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS
@@ -40,51 +40,51 @@
 
 // used internally by AQGridView and AQGridViewUpdateInfo
 @interface AQGridView ()
-@property (nonatomic, copy) NSSet * animatingCells;
+@property (nonatomic, copy) NSSet *animatingCells;
 @end
 
 @interface AQGridViewUpdateInfo : NSObject
 {
-	// NB: These are never cleared, only sorted & modified.
-	// It is assumed that a deferred update info object will be created in -beginUpdates
-	//  and released in -endUpdates, and will not need to last across multiple suspended update sequences
-	NSMutableArray *	_insertItems;
-	NSMutableArray *	_deleteItems;
-	NSMutableArray *	_moveItems;
-	NSMutableArray *	_reloadItems;
-	
-	// index sets, cached for handiness
-	NSMutableIndexSet * _insertedIndices;
-	NSMutableIndexSet *	_deletedIndices;
-	NSMutableIndexSet * _oldMovedIndices;
-	NSMutableIndexSet * _newMovedIndices;
-	NSMutableIndexSet * _reloadedIndices;
-	
-	// old and new grid data -- for bounds calculations
-	AQGridViewData *	_oldGridData;
-	AQGridViewData *	_newGridData;
-	
-	// mapping tables, used to map from old indices to new ones
-	NSUInteger *		_oldToNewIndexMap;
-	NSUInteger *		_newToOldIndexMap;
-	
-	// indices of all items which were simply shuffled around as a result of other operations
-	NSMutableIndexSet *	_onlyMovedIndices;
-	
-	// needs to ask the grid view for cells
-	AQGridView *		__unsafe_unretained _gridView;		// weak reference
-	
-	NSMutableSet *		_animatingCells;
+    // NB: These are never cleared, only sorted & modified.
+    // It is assumed that a deferred update info object will be created in -beginUpdates
+    //  and released in -endUpdates, and will not need to last across multiple suspended update sequences
+    NSMutableArray *_insertItems;
+    NSMutableArray *_deleteItems;
+    NSMutableArray *_moveItems;
+    NSMutableArray *_reloadItems;
+    
+    // index sets, cached for handiness
+    NSMutableIndexSet *_insertedIndices;
+    NSMutableIndexSet *_deletedIndices;
+    NSMutableIndexSet *_oldMovedIndices;
+    NSMutableIndexSet *_newMovedIndices;
+    NSMutableIndexSet *_reloadedIndices;
+    
+    // old and new grid data -- for bounds calculations
+    AQGridViewData *_oldGridData;
+    AQGridViewData *_newGridData;
+    
+    // mapping tables, used to map from old indices to new ones
+    NSUInteger *_oldToNewIndexMap;
+    NSUInteger *_newToOldIndexMap;
+    
+    // indices of all items which were simply shuffled around as a result of other operations
+    NSMutableIndexSet *_onlyMovedIndices;
+    
+    // needs to ask the grid view for cells
+    AQGridView *__unsafe_unretained _gridView;                          // weak reference
+    
+    NSMutableSet *_animatingCells;
 }
 
-- (id) initWithOldGridData: (AQGridViewData *) oldGridData forGridView: (AQGridView *) gridView;
+- (id)initWithOldGridData:(AQGridViewData *)oldGridData forGridView:(AQGridView *)gridView;
 
-- (void) updateItemsAtIndices: (NSIndexSet *) indices
-				 updateAction: (AQGridViewUpdateAction) action
-				withAnimation: (AQGridViewItemAnimation) animation;
-- (void) moveItemAtIndex: (NSUInteger) index
-				 toIndex: (NSUInteger) index
-		   withAnimation: (AQGridViewItemAnimation) animation;
+- (void)updateItemsAtIndices:(NSIndexSet *)indices
+                updateAction:(AQGridViewUpdateAction)action
+               withAnimation:(AQGridViewItemAnimation)animation;
+- (void)moveItemAtIndex:(NSUInteger)index
+                toIndex:(NSUInteger)index
+          withAnimation:(AQGridViewItemAnimation)animation;
 
 @property (nonatomic, readonly) NSUInteger numberOfUpdates;
 
@@ -94,20 +94,20 @@
 //  to ANY inserts/deletes occurring.
 // Needless to say: this is therefore quite private, since AQGridView must conform to and rely
 //  on this behaviour
-- (void) cleanupUpdateItems;
+- (void)cleanupUpdateItems;
 
 // the returned values are not guaranteed to be correct prior to invocation of -cleanupUpdateItems above
-- (NSArray *) sortedInsertItems;
-- (NSArray *) sortedDeleteItems;
-- (NSArray *) sortedMoveItems;
-- (NSArray *) sortedReloadItems;
+- (NSArray *)sortedInsertItems;
+- (NSArray *)sortedDeleteItems;
+- (NSArray *)sortedMoveItems;
+- (NSArray *)sortedReloadItems;
 
-- (AQGridViewData *) newGridViewData;
-- (NSUInteger) numberOfItemsAfterUpdates;
+- (AQGridViewData *)newGridViewData;
+- (NSUInteger)numberOfItemsAfterUpdates;
 
-- (NSUInteger) newIndexForOldIndex: (NSUInteger) oldIndex;
+- (NSUInteger)newIndexForOldIndex:(NSUInteger)oldIndex;
 
 // returns a list of all the views being animated
-- (NSSet *) animateCellUpdatesUsingVisibleContentRect: (CGRect) contentRect;
+- (NSSet *)animateCellUpdatesUsingVisibleContentRect:(CGRect)contentRect;
 
 @end

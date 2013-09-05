@@ -10,5 +10,5 @@
 
 
 @interface NSIndexSet (AQIsSetContiguous)
-- (BOOL) aq_isSetContiguous;
+- (BOOL)aq_isSetContiguous;
 @end
