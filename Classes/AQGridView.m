@@ -110,13 +110,14 @@ NSString *const AQGridViewSelectionDidChangeNotification = @"AQGridViewSelection
     self.separatorColor = [UIColor colorWithWhite:0.85 alpha:1.0];
     self.canCancelContentTouches = YES;
     
-    _selectedIndex = NSNotFound;
+    _selectedIndices = [[NSMutableIndexSet alloc] init];
     _pendingSelectionIndex = NSNotFound;
     
     _flags.resizesCellWidths = 0;
     _flags.numColumns = [_gridData numberOfItemsPerRow];
     _flags.separatorStyle = AQGridViewCellSeparatorStyleEmptySpace;
     _flags.allowsSelection = 1;
+    _flags.allowsMultipleSelection = 0;
     _flags.usesPagedHorizontalScrolling = NO;
     _flags.contentSizeFillsBounds = 1;
 }
@@ -237,7 +238,19 @@ NSString *const AQGridViewSelectionDidChangeNotification = @"AQGridViewSelection
 
 - (void)setAllowsSelection:(BOOL)value
 {
-    _flags.allowsSelection = (value ? 1 : 0);
+    _flags.allowsSelection = value;
+}
+
+
+- (BOOL)allowsMultipleSelection
+{
+    return (_flags.allowsMultipleSelection);
+}
+
+
+- (void)setAllowsMultipleSelection:(BOOL)value
+{
+    _flags.allowsMultipleSelection = value;
 }
 
 
@@ -249,7 +262,7 @@ NSString *const AQGridViewSelectionDidChangeNotification = @"AQGridViewSelection
 
 - (void)setBackgroundViewExtendsDown:(BOOL)value
 {
-    _flags.backgroundViewExtendsDown = (value ? 1 : 0);
+    _flags.backgroundViewExtendsDown = value;
 }
 
 
@@ -967,10 +980,14 @@ NSString *const AQGridViewSelectionDidChangeNotification = @"AQGridViewSelection
                      animations: ^(void) {
                          self.animatingCells = [info animateCellUpdatesUsingVisibleContentRect:[self gridViewVisibleBounds]];
                          
-                         
                          _gridData = [info newGridViewData];
                          
-                         if (_selectedIndex != NSNotFound) _selectedIndex = [info newIndexForOldIndex:_selectedIndex];
+                         NSMutableIndexSet *newIndices = [[NSMutableIndexSet alloc] init];
+                         [_selectedIndices enumerateIndexesUsingBlock: ^(NSUInteger idx, BOOL *stop)
+                          {
+                              [newIndices addIndex:[info newIndexForOldIndex:idx]];
+                          }];
+                         _selectedIndices = newIndices;
                          
                          _reloadingSuspendedCount--;
                      }
@@ -1062,9 +1079,20 @@ NSString *const AQGridViewSelectionDidChangeNotification = @"AQGridViewSelection
 #pragma mark -
 #pragma mark Selection
 
+
 - (NSUInteger)indexOfSelectedItem
 {
-    return (_selectedIndex);
+    if (_selectedIndices.count == 0) {
+        return NSNotFound;
+    }
+    
+    return _selectedIndices.firstIndex;
+}
+
+
+- (NSIndexSet *)indicesOfSelectedItems
+{
+    return [_selectedIndices copy];
 }
 
 
@@ -1078,13 +1106,11 @@ NSString *const AQGridViewSelectionDidChangeNotification = @"AQGridViewSelection
     
     if (index == NSNotFound) {
         NSUInteger i = [_highlightedIndices firstIndex];
-        
         while (i != NSNotFound) {
             AQGridViewCell *cell = [self cellForItemAtIndex:i];
             [cell setHighlighted:NO animated:animated];
             i = [_highlightedIndices indexGreaterThanIndex:i];
         }
-        
         [_highlightedIndices removeAllIndexes];
         return;
     }
@@ -1100,11 +1126,11 @@ NSString *const AQGridViewSelectionDidChangeNotification = @"AQGridViewSelection
 - (void)unhighlightItemAtIndex:(NSUInteger)index animated:(BOOL)animated
 {
     if ([_highlightedIndices containsIndex:index] == NO) return;
-    
+
     [_highlightedIndices removeIndex:index];
     
     // don't remove highlighting if the cell is actually the selected cell
-    if (index == _selectedIndex) return;
+    if ([_selectedIndices containsIndex:index]) return;
     
     AQGridViewCell *cell = [self cellForItemAtIndex:index];
     
@@ -1114,11 +1140,12 @@ NSString *const AQGridViewSelectionDidChangeNotification = @"AQGridViewSelection
 
 - (void)_deselectItemAtIndex:(NSUInteger)index animated:(BOOL)animated notifyDelegate:(BOOL)notifyDelegate
 {
-    if (_selectedIndex != index) return;
+    if (![_selectedIndices containsIndex:index]) return;
     
     if (notifyDelegate && _flags.delegateWillDeselectItem) [self.delegate gridView:self willDeselectItemAtIndex:index];
     
-    _selectedIndex = NSNotFound;
+    [_selectedIndices removeIndex:index];
+    
     [[self cellForItemAtIndex:index] setSelected:NO animated:animated];
     
     if (notifyDelegate && _flags.delegateDidDeselectItem) [self.delegate gridView:self didDeselectItemAtIndex:index];
@@ -1134,19 +1161,23 @@ NSString *const AQGridViewSelectionDidChangeNotification = @"AQGridViewSelection
             scrollPosition:(AQGridViewScrollPosition)position notifyDelegate:(BOOL)notifyDelegate
            numFingersTouch:(NSUInteger)numFingers
 {
-    if (_selectedIndex == index) return; // already selected this item
+    if ([_selectedIndices containsIndex:index]) return;   // already selected this item
     
-    if (_selectedIndex != NSNotFound) [self _deselectItemAtIndex:_selectedIndex animated:animated notifyDelegate:notifyDelegate];
+    if (!_flags.allowsMultipleSelection && _selectedIndices.count > 0) {
+        [self _deselectItemAtIndex:_selectedIndices.firstIndex animated:animated notifyDelegate:notifyDelegate];
+    }
     
     if (_flags.allowsSelection == 0) return;
     
     if (notifyDelegate && _flags.delegateWillSelectItem) index = [self.delegate gridView:self willSelectItemAtIndex:index];
     
     if (notifyDelegate && _flags.delegateWillSelectItemMultiTouch)
-        index = [self.delegate gridView:self willSelectItemAtIndex:index
-                        numFingersTouch:numFingers];
-    
-    _selectedIndex = index;
+        index = [self.delegate gridView:self willSelectItemAtIndex:index numFingersTouch:numFingers];
+
+    if (index < self.numberOfItems) {
+        [_selectedIndices addIndex:index];
+    }
+
     [[self cellForItemAtIndex:index] setSelected:YES animated:animated];
     
     if (position != AQGridViewScrollPositionNone) [self scrollToItemAtIndex:index atScrollPosition:position animated:animated];
@@ -1290,10 +1321,10 @@ NSString *const AQGridViewSelectionDidChangeNotification = @"AQGridViewSelection
     
     [self unhighlightItemAtIndex:index animated:NO];
     
-    if ( ([[self cellForItemAtIndex:index] isSelected]) && (self.requiresSelection == NO) ) [self _deselectItemAtIndex:index animated:NO notifyDelegate:YES];
+    if ( ([[self cellForItemAtIndex:index] isSelected]) && (self.requiresSelection == NO) )
+        [self _deselectItemAtIndex:index animated:NO notifyDelegate:YES];
     else
-        [self _selectItemAtIndex:index animated:NO scrollPosition:AQGridViewScrollPositionNone notifyDelegate:YES
-                 numFingersTouch:numFingersCount];
+        [self _selectItemAtIndex:index animated:NO scrollPosition:AQGridViewScrollPositionNone notifyDelegate:YES numFingersTouch:numFingersCount];
     
     _pendingSelectionIndex = NSNotFound;
 }
@@ -2051,7 +2082,7 @@ NSArray * __sortDescriptors;
             CGRect cellFrame = cell.frame;
             
             cell.frame = [self fixCellFrame:cellFrame forGridRect:gridRect];
-            cell.selected = (cell.displayIndex == _selectedIndex);
+            cell.selected = [_selectedIndices containsIndex:cell.displayIndex];
         }
     }
 }
@@ -2141,6 +2172,7 @@ NSArray * __sortDescriptors;
 
 
 @end
+
 
 @implementation AQGridView (AQGridViewPrivate)
 

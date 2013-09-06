@@ -122,7 +122,7 @@ extern NSString *const AQGridViewSelectionDidChangeNotification;
     
     NSInteger _updateCount;
     
-    NSUInteger _selectedIndex;
+    NSMutableIndexSet * _selectedIndices;
     NSUInteger _pendingSelectionIndex;
     
     CGPoint _touchBeganPosition;
@@ -136,6 +136,7 @@ extern NSString *const AQGridViewSelectionDidChangeNotification;
         unsigned numColumns : 6;
         unsigned separatorStyle : 3;
         unsigned allowsSelection : 1;
+        unsigned allowsMultipleSelection:1;
         unsigned backgroundViewExtendsUp : 1;
         unsigned backgroundViewExtendsDown : 1;
         unsigned usesPagedHorizontalScrolling : 1;
@@ -210,14 +211,18 @@ extern NSString *const AQGridViewSelectionDidChangeNotification;
 
 - (void)moveItemAtIndex:(NSUInteger)index toIndex:(NSUInteger)newIndex withAnimation:(AQGridViewItemAnimation)animation;
 
+
 // Selection
 
 @property (nonatomic) BOOL allowsSelection;     // default is YES
+@property (nonatomic) BOOL allowsMultipleSelection; // default is NO
 @property (nonatomic) BOOL requiresSelection;   // if YES, tapping on a selected cell will not de-select it
 
-- (NSUInteger)indexOfSelectedItem;              // returns NSNotFound if no item is selected
+- (NSUInteger) indexOfSelectedItem;    // returns NSNotFound if no item is selected, returns first item if multiple selection is enabled
+- (NSIndexSet *) indicesOfSelectedItems;
 - (void)selectItemAtIndex:(NSUInteger)index animated:(BOOL)animated scrollPosition:(AQGridViewScrollPosition)scrollPosition;
 - (void)deselectItemAtIndex:(NSUInteger)index animated:(BOOL)animated;
+
 
 // Appearance
 
