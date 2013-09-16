@@ -69,6 +69,7 @@ typedef enum {
 
 - (void)gridView:(AQGridView *)gridView willDisplayCell:(AQGridViewCell *)cell forItemAtIndex:(NSUInteger)index;
 
+
 // Selection
 
 // Called before selection occurs. Return a new index, or NSNotFound, to change the proposed selection.
@@ -93,7 +94,11 @@ typedef enum {
 
 @end
 
+
+
 extern NSString *const AQGridViewSelectionDidChangeNotification;
+
+
 
 @interface AQGridView : UIScrollView
 {
@@ -171,12 +176,13 @@ extern NSString *const AQGridViewSelectionDidChangeNotification;
 
 @property (nonatomic, unsafe_unretained) IBOutlet id<AQGridViewDataSource> dataSource;
 @property (nonatomic, unsafe_unretained) IBOutlet id<AQGridViewDelegate> delegate;
-
 @property (nonatomic, assign) AQGridViewLayoutDirection layoutDirection;
+
 
 // Data
 
 - (void)reloadData;
+
 
 // Info
 
@@ -242,6 +248,7 @@ extern NSString *const AQGridViewSelectionDidChangeNotification;
 
 - (AQGridViewCell *)dequeueReusableCellWithIdentifier:(NSString *)reuseIdentifier;
 
+
 // Headers and Footers
 
 @property (nonatomic, retain) UIView *gridHeaderView;
@@ -254,12 +261,16 @@ extern NSString *const AQGridViewSelectionDidChangeNotification;
 
 @property (nonatomic, readonly) BOOL isAnimatingUpdates;
 
+
 // Editing
 
 @property (nonatomic, getter = isEditing) BOOL editing;                 // default is NO. setting is not animated.
 - (void)setEditing:(BOOL)editing animated:(BOOL)animated;
 
 @end
+
+
+
 
 @protocol AQGridViewDataSource <NSObject>
 
