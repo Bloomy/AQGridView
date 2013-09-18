@@ -695,6 +695,8 @@ NSString *const AQGridViewSelectionDidChangeNotification = @"AQGridViewSelection
 
 - (void)layoutSubviews
 {
+    [super layoutSubviews];
+
     if ( (_flags.needsReload == 1) && (_animationCount == 0) && (_reloadingSuspendedCount == 0) ) [self reloadData];
     
     if ( (_reloadingSuspendedCount == 0) && (!CGRectIsEmpty([self gridViewVisibleBounds])) ) {
