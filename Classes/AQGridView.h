@@ -58,19 +58,27 @@ typedef enum {
     AQGridViewLayoutDirectionHorizontal
 } AQGridViewLayoutDirection;
 
+
+
+
 @protocol AQGridViewDataSource;
 @class AQGridView, AQGridViewData, AQGridViewUpdateInfo;
+
+
+
 
 @protocol AQGridViewDelegate <NSObject, UIScrollViewDelegate>
 
 @optional
 
-// Display customization
+#pragma mark - Display customization
 
 - (void)gridView:(AQGridView *)gridView willDisplayCell:(AQGridViewCell *)cell forItemAtIndex:(NSUInteger)index;
 
 
-// Selection
+#pragma mark - Selection
+
+- (void)gridViewWasTouched:(AQGridView *)gridView;
 
 // Called before selection occurs. Return a new index, or NSNotFound, to change the proposed selection.
 - (NSUInteger)gridView:(AQGridView *)gridView willSelectItemAtIndex:(NSUInteger)index;
@@ -89,14 +97,21 @@ typedef enum {
 
 - (CGRect)gridView:(AQGridView *)gridView adjustCellFrame:(CGRect)cellFrame withinGridCellFrame:(CGRect)gridCellFrame;
 
-// Editing
+#pragma mark - Editing
+
 - (void)gridView:(AQGridView *)aGridView commitEditingStyle:(UITableViewCellEditingStyle)editingStyle forRowAtIndex:(NSUInteger)index;
+
+#
 
 @end
 
 
 
+
+
 extern NSString *const AQGridViewSelectionDidChangeNotification;
+
+
 
 
 
@@ -127,7 +142,7 @@ extern NSString *const AQGridViewSelectionDidChangeNotification;
     
     NSInteger _updateCount;
     
-    NSMutableIndexSet * _selectedIndices;
+    NSMutableIndexSet *_selectedIndices;
     NSUInteger _pendingSelectionIndex;
     
     CGPoint _touchBeganPosition;
@@ -141,11 +156,11 @@ extern NSString *const AQGridViewSelectionDidChangeNotification;
         unsigned numColumns : 6;
         unsigned separatorStyle : 3;
         unsigned allowsSelection : 1;
-        unsigned allowsMultipleSelection:1;
+        unsigned allowsMultipleSelection : 1;
         unsigned backgroundViewExtendsUp : 1;
         unsigned backgroundViewExtendsDown : 1;
         unsigned usesPagedHorizontalScrolling : 1;
-        unsigned updating : 1;                                          // unused
+        unsigned updating : 1;                          // unused
         unsigned ignoreTouchSelect : 1;
         unsigned needsReload : 1;
         unsigned allCellsNeedLayout : 1;
@@ -176,21 +191,20 @@ extern NSString *const AQGridViewSelectionDidChangeNotification;
 
 @property (nonatomic, unsafe_unretained) IBOutlet id<AQGridViewDataSource> dataSource;
 @property (nonatomic, unsafe_unretained) IBOutlet id<AQGridViewDelegate> delegate;
-@property (nonatomic, assign) AQGridViewLayoutDirection layoutDirection;
 
 
-// Data
+#pragma mark - Data
 
 - (void)reloadData;
 
 
-// Info
+#pragma mark - Info
 
 @property (nonatomic, readonly) NSUInteger numberOfItems;
 @property (nonatomic, readonly) NSUInteger numberOfColumns;
 @property (nonatomic, readonly) NSUInteger numberOfRows;
-
 @property (nonatomic, readonly) CGSize gridCellSize;
+
 
 - (void)doAddVisibleCell:(UIView *)cell;
 
@@ -206,7 +220,8 @@ extern NSString *const AQGridViewSelectionDidChangeNotification;
 
 - (void)scrollToItemAtIndex:(NSUInteger)index atScrollPosition:(AQGridViewScrollPosition)scrollPosition animated:(BOOL)animated;
 
-// Insertion/deletion/reloading
+
+#pragma mark - Insertion/deletion/reloading
 
 - (void)beginUpdates;           // allow multiple insert/delete of items to be animated simultaneously. Nestable.
 - (void)endUpdates;             // only call insert/delete/reload calls inside an update block.
@@ -218,38 +233,38 @@ extern NSString *const AQGridViewSelectionDidChangeNotification;
 - (void)moveItemAtIndex:(NSUInteger)index toIndex:(NSUInteger)newIndex withAnimation:(AQGridViewItemAnimation)animation;
 
 
-// Selection
+#pragma mark - Selection
 
 @property (nonatomic) BOOL allowsSelection;     // default is YES
 @property (nonatomic) BOOL allowsMultipleSelection; // default is NO
 @property (nonatomic) BOOL requiresSelection;   // if YES, tapping on a selected cell will not de-select it
 
-- (NSUInteger) indexOfSelectedItem;    // returns NSNotFound if no item is selected, returns first item if multiple selection is enabled
-- (NSIndexSet *) indicesOfSelectedItems;
+- (NSUInteger)indexOfSelectedItem;     // returns NSNotFound if no item is selected, returns first item if multiple selection is enabled
+- (NSIndexSet *)indicesOfSelectedItems;
 - (void)selectItemAtIndex:(NSUInteger)index animated:(BOOL)animated scrollPosition:(AQGridViewScrollPosition)scrollPosition;
 - (void)deselectItemAtIndex:(NSUInteger)index animated:(BOOL)animated;
 
 
-// Appearance
+#pragma mark - Appearance
 
-@property (nonatomic, assign) BOOL resizesCellWidthToFit;       // default is NO. Set to YES if the view should resize cells to fill all available space in their grid square. Ignored if separatorStyle == AQGridViewCellSeparatorStyleEmptySpace.
+@property (nonatomic, assign) AQGridViewLayoutDirection layoutDirection;
 
-// this property is now officially deprecated -- it will instead set the layout direction to horizontal if
-//  this property is set to YES, or to vertical otherwise.
-@property (nonatomic, assign) BOOL clipsContentWidthToBounds __attribute__((deprecated));       // default is YES. If you want to enable horizontal scrolling, set this to NO.
+@property (nonatomic, assign) CGSize padding;                   // Horizontal, vertical
+@property (nonatomic, assign) BOOL resizesCellWidthToFit;       // default is NO. Set to YES if the view should resize cells to fill all available space
+// in their grid square. Ignored if separatorStyle == AQGridViewCellSeparatorStyleEmptySpace.
 
 @property (nonatomic, retain) UIView *backgroundView;           // specifies a view to place behind the cells
 @property (nonatomic) BOOL backgroundViewExtendsUp;             // default is NO. If YES, the background view extends upward and is visible during a bounce.
 @property (nonatomic) BOOL backgroundViewExtendsDown;           // default is NO. If YES, the background view extends downward and is visible during a bounce.
 @property (nonatomic) BOOL usesPagedHorizontalScrolling;        // default is NO, and scrolls verticalls only. Set to YES to have horizontal-only scrolling by page.
 
-@property (nonatomic) AQGridViewCellSeparatorStyle separatorStyle;      // default is AQGridViewCellSeparatorStyleEmptySpace
+@property (nonatomic) AQGridViewCellSeparatorStyle separatorStyle; // default is AQGridViewCellSeparatorStyleEmptySpace
 @property (nonatomic, retain) UIColor *separatorColor;          // ignored unless separatorStyle == AQGridViewCellSeparatorStyleSingleLine. Default is standard separator gray.
 
 - (AQGridViewCell *)dequeueReusableCellWithIdentifier:(NSString *)reuseIdentifier;
 
 
-// Headers and Footers
+#pragma mark - Headers and Footers
 
 @property (nonatomic, retain) UIView *gridHeaderView;
 @property (nonatomic, retain) UIView *gridFooterView;
@@ -262,7 +277,7 @@ extern NSString *const AQGridViewSelectionDidChangeNotification;
 @property (nonatomic, readonly) BOOL isAnimatingUpdates;
 
 
-// Editing
+#pragma mark - Editing
 
 @property (nonatomic, getter = isEditing) BOOL editing;                 // default is NO. setting is not animated.
 - (void)setEditing:(BOOL)editing animated:(BOOL)animated;

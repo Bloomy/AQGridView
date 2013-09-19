@@ -60,7 +60,7 @@
 {
     self = [super initWithFrame:frame];
     
-    if (self == nil) return (nil);
+    if (!self) return nil;
     
     self.reuseIdentifier = reuseIdentifier;
     _cellFlags.usingDefaultSelectedBackgroundView = 1;

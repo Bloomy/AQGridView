@@ -41,6 +41,7 @@
 - (void)fixDesiredCellSizeForWidth:(CGFloat)width;
 @end
 
+
 @implementation AQGridViewData
 
 @synthesize reorderedIndex = _reorderedIndex, numberOfItems = _numberOfItems, topPadding = _topPadding, bottomPadding = _bottomPadding, leftPadding = _leftPadding, rightPadding = _rightPadding, layoutDirection = _layoutDirection;
@@ -49,7 +50,7 @@
 {
     self = [super init];
     
-    if (self == nil) return (nil);
+    if (!self) return nil;
     
     _gridView = gridView;
     _boundsSize = gridView.bounds.size;
@@ -253,6 +254,8 @@
 
 @end
 
+
+
 @implementation AQGridViewData (AQGridViewDataPrivate)
 
 - (void)fixDesiredCellSizeForWidth:(CGFloat)width
@@ -265,6 +268,5 @@
     _actualCellSize.width = floorf(w / multiplier);
     _actualCellSize.height = _desiredCellSize.height;
 }
-
 
 @end

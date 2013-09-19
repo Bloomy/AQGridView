@@ -44,7 +44,7 @@
 {
     self = [super init];
     
-    if (self == nil) return (nil);
+    if (!self) return nil;
     
     _index = index;
     _action = action;

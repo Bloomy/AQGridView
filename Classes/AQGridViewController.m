@@ -177,7 +177,7 @@
 
 - (AQGridViewCell *)gridView:(AQGridView *)gridView cellForItemAtIndex:(NSUInteger)index
 {
-    return (nil);
+    return nil;
 }
 
 

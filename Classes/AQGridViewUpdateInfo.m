@@ -49,7 +49,7 @@
 {
     self = [super init];
     
-    if (self == nil) return (nil);
+    if (!self) return nil;
     
     _insertItems = [[NSMutableArray alloc] init];
     _deleteItems = [[NSMutableArray alloc] init];
@@ -92,7 +92,7 @@
             break;
     }
     
-    return (nil);
+    return nil;
 }
 
 
@@ -452,7 +452,7 @@ do {} while (0)
 {
     if (animation == AQGridViewItemAnimationNone) {
         [cell removeFromSuperview];
-        return (nil);
+        return nil;
     }
     
     [UIView setAnimationsEnabled:NO];
