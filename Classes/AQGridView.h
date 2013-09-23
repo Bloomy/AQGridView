@@ -193,13 +193,15 @@ extern NSString *const AQGridViewSelectionDidChangeNotification;
 @property (nonatomic, unsafe_unretained) IBOutlet id<AQGridViewDelegate> delegate;
 
 
-#pragma mark - Data
+#pragma mark - Initializers
+- (id)initWithCellSize:(CGSize)desiredCellSize;
 
+
+#pragma mark - Data
 - (void)reloadData;
 
 
 #pragma mark - Info
-
 @property (nonatomic, readonly) NSUInteger numberOfItems;
 @property (nonatomic, readonly) NSUInteger numberOfColumns;
 @property (nonatomic, readonly) NSUInteger numberOfRows;
@@ -261,7 +263,9 @@ extern NSString *const AQGridViewSelectionDidChangeNotification;
 @property (nonatomic) AQGridViewCellSeparatorStyle separatorStyle; // default is AQGridViewCellSeparatorStyleEmptySpace
 @property (nonatomic, retain) UIColor *separatorColor;          // ignored unless separatorStyle == AQGridViewCellSeparatorStyleSingleLine. Default is standard separator gray.
 
+
 - (AQGridViewCell *)dequeueReusableCellWithIdentifier:(NSString *)reuseIdentifier;
+- (void)setDesiredCellSize:(CGSize)desiredCellSize;
 
 
 #pragma mark - Headers and Footers

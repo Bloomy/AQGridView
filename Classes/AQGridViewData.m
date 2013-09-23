@@ -265,7 +265,7 @@
     CGFloat dw = floorf(_desiredCellSize.width);
     CGFloat multiplier = floorf(w / dw);
     
-    _actualCellSize.width = floorf(w / multiplier);
+    _actualCellSize.width = multiplier != 0 ? floorf(w / multiplier) : _desiredCellSize.width;
     _actualCellSize.height = _desiredCellSize.height;
 }
 

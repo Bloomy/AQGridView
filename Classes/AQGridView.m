@@ -100,10 +100,17 @@ NSString *const AQGridViewSelectionDidChangeNotification = @"AQGridViewSelection
 
 @synthesize dataSource = _dataSource, backgroundView = _backgroundView, separatorColor = _separatorColor, animatingCells = _animatingCells, animatingIndices = _animatingIndices;
 
+
 - (void)_sharedGridViewInit
 {
+    [self _sharedGridViewInitWithCellSize:CGSizeMake(96.0, 96.0)];
+}
+
+
+- (void)_sharedGridViewInitWithCellSize:(CGSize)desiredCellSize
+{
     _gridData = [[AQGridViewData alloc] initWithGridView:self];
-    [_gridData setDesiredCellSize:CGSizeMake(96.0, 96.0)];
+    [_gridData setDesiredCellSize:desiredCellSize];
     [_gridData setTopPadding:12];
     [_gridData setBottomPadding:12];
     
@@ -130,6 +137,7 @@ NSString *const AQGridViewSelectionDidChangeNotification = @"AQGridViewSelection
 }
 
 
+
 - (id)initWithFrame:(CGRect)frame
 {
     self = [super initWithFrame:frame];
@@ -151,6 +159,24 @@ NSString *const AQGridViewSelectionDidChangeNotification = @"AQGridViewSelection
     [self _sharedGridViewInit];
     
     return (self);
+}
+
+
+- (id)initWithCellSize:(CGSize)desiredCellSize
+{
+    self = [super initWithFrame:CGRectZero];
+
+    if (!self) return nil;
+    
+    [self _sharedGridViewInitWithCellSize:desiredCellSize];
+    
+    return (self);
+}
+
+
+- (void)setDesiredCellSize:(CGSize)desiredCellSize
+{
+    [_gridData setDesiredCellSize:desiredCellSize];
 }
 
 

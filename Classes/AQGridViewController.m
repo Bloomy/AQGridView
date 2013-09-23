@@ -45,6 +45,8 @@
 
 @synthesize clearsSelectionOnViewWillAppear = _clearsSelectionOnViewWillAppear;
 
+
+
 - (void)_sharedGridViewDefaultSetup
 {
     self.gridView.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
